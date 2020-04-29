@@ -13,7 +13,16 @@ const render = require("./lib/htmlRenderer");
 
 const writeFileAsync = util.promisify(fs.writeFile);
 
-async function addNewEmployee() {
+async function init(){
+    let employees = await createEmployeesArray();
+    let renderedData = await render(employees);
+    checkFolder();
+    await writeFileAsync(outputPath,renderedData);
+}
+
+async function createEmployeesArray() {
+    let employees = [];
+    let newEmployee = {};
     const answers = await inquirer.prompt([
         {
             type:"confirm",
@@ -21,15 +30,48 @@ async function addNewEmployee() {
             name: "addEmployee",
             default: true
         }
-    ])
-        if (answers.addEmployee){
-            await populateTeam();
-            await addNewEmployee();
-        } else {
-            console.log("No more employees added to the team");
+    ]);
+    if (answers.addEmployee) {
+        newEmployee = await createEmployeeInfo();
+        await createEmployeesArray();
+    } else {
+        console.log("No more employees added to the team");
+    }
+    employees.push(newEmployee);
+    return employees;
+}
+
+function checkFolder() {
+    try{
+        if(!fs.existsSync(OUTPUT_DIR)){
+            fs.mkdirSync(OUTPUT_DIR);
         }
-    
-  
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function createEmployeeInfo(employee) {
+    try {
+        const data = await promptEmployeeRole();
+        const employeeRole = data.role;
+        if(employeeRole === "Manager"){
+            const managerData = await promptManagerInfo();
+            employee = new Manager(managerData.managerName, managerData.managerId, managerData.managerEmail, managerData.managerOfficeNumber);
+
+        } else if(employeeRole === "Engineer"){
+            const engineerData = await promptEngineerInfo();
+            employee = new Engineer(engineerData.engineerName, engineerData.engineerId, engineerData.engineerEmail, engineerData.engineerGithub);
+            
+        } else {
+            const internData = await promptInternInfo();
+            employee = new Intern(internData.internName, internData.internId, internData.internEmail, internData.internSchool);
+        }
+        return employee;  
+    } 
+    catch(err) {
+        console.log(err);
+    }
 }
 
 function promptEmployeeRole(){
@@ -46,44 +88,6 @@ function promptEmployeeRole(){
             default: 0
         }
     ]);
-}
-
-async function populateTeam() {
-    try {
-        const data = await promptEmployeeRole();
-        const employeeRole = data.role;
-        const employees = [];
-        if(employeeRole === "Manager"){
-            const managerData = await promptManagerInfo();
-            manager = new Manager(managerData.managerName, managerData.managerId, managerData.managerEmail, managerData.managerOfficeNumber);
-            employees.push(manager);
-
-        } else if(employeeRole === "Engineer"){
-            const engineerData = await promptEngineerInfo();
-            engineer = new Engineer(engineerData.engineerName, engineerData.engineerId, engineerData.engineerEmail, engineerData.engineerGithub);
-            employees.push(engineer);
-        } else {
-            const internData = await promptInternInfo();
-            intern = new Intern(internData.internName, internData.internId, internData.internEmail, internData.internSchool);
-            employees.push(intern);
-        }
-        let renderedData = render(employees);
-        checkFolder();
-        await writeFileAsync(outputPath,renderedData);
-    } 
-    catch(err) {
-        console.log(err);
-    }
-}
-
-function checkFolder() {
-    try{
-        if(!fs.existsSync(OUTPUT_DIR)){
-            fs.mkdirSync(OUTPUT_DIR);
-        }
-    } catch (err) {
-        console.log(err);
-    }
 }
 
 function promptManagerInfo(){
@@ -173,7 +177,7 @@ function promptInternInfo(){
     ]);
 }
 
-addNewEmployee();
+init();
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
