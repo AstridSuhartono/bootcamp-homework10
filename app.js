@@ -13,8 +13,8 @@ const render = require("./lib/htmlRenderer");
 
 const writeFileAsync = util.promisify(fs.writeFile);
 
-function addNewEmployee() {
-    inquirer.prompt([
+async function addNewEmployee() {
+    const answers = await inquirer.prompt([
         {
             type:"confirm",
             message: "Add employees? (hit enter for YES)",
@@ -22,14 +22,13 @@ function addNewEmployee() {
             default: true
         }
     ])
-    .then(answers => {
-        populateTeam();
         if (answers.addEmployee){
-            addNewEmployee();
+            await populateTeam();
+            await addNewEmployee();
         } else {
             console.log("No more employees added to the team");
         }
-    })
+    
   
 }
 
