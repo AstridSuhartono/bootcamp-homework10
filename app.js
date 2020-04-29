@@ -13,15 +13,17 @@ const render = require("./lib/htmlRenderer");
 
 const writeFileAsync = util.promisify(fs.writeFile);
 
+let employees = [];
+
 async function init(){
     let employees = await createEmployeesArray();
-    let renderedData = await render(employees);
+    console.log("this is array from init:"+ employees);
+    let renderedData = render(employees);
     checkFolder();
     await writeFileAsync(outputPath,renderedData);
 }
 
 async function createEmployeesArray() {
-    let employees = [];
     let newEmployee = {};
     const answers = await inquirer.prompt([
         {
@@ -31,13 +33,15 @@ async function createEmployeesArray() {
             default: true
         }
     ]);
+
     if (answers.addEmployee) {
         newEmployee = await createEmployeeInfo();
+        employees.push(newEmployee);
         await createEmployeesArray();
     } else {
         console.log("No more employees added to the team");
     }
-    employees.push(newEmployee);
+    console.log("this is array from create array:"+ employees);
     return employees;
 }
 
