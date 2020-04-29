@@ -4,6 +4,7 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+const util = require("util");
 
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
@@ -50,12 +51,22 @@ async function populateEmployeeInfo() {
             employees.push(intern);
         }
         let renderedData = render(employees);
-        await writeFileAsync(OUTPUT_DIR.outputPath,renderedData);
+        checkFolder();
+        await writeFileAsync(outputPath,renderedData);
     } catch(err) {
         console.log(err);
     }
 }
 
+function checkFolder() {
+    try{
+        if(!fs.existsSync(OUTPUT_DIR)){
+            fs.mkdirSync(OUTPUT_DIR);
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
 
 function promptManagerInfo(){
     return inquirer.prompt([
