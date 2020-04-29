@@ -31,8 +31,27 @@ function promptEmployeeClass(){
     ]);
 }
 
+function isAddEmployee() {
+    inquirer.prompt([
+        {
+            type:"confirm",
+            message: "Add employees? (hit enter for YES)",
+            name: "addEmployee",
+            default: true
+        }
+    ])
+    .then(answers => {
+        populateEmployeeInfo();
+        if (answers.addEmployee){
+            isAddEmployee();
+        } else {
+            console.log("No more employees added to the team");
+        }
+    });
+}
+
 async function populateEmployeeInfo() {
-    try{
+    try {
         const data = await promptEmployeeClass();
         const employeeRole = data.role;
         const employees = [];
@@ -53,7 +72,8 @@ async function populateEmployeeInfo() {
         let renderedData = render(employees);
         checkFolder();
         await writeFileAsync(outputPath,renderedData);
-    } catch(err) {
+    } 
+    catch(err) {
         console.log(err);
     }
 }
@@ -155,8 +175,7 @@ function promptInternInfo(){
     ]);
 }
 
-populateEmployeeInfo();
-
+isAddEmployee();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
