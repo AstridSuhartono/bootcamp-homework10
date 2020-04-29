@@ -10,9 +10,98 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const writeFileAsync = util.promisify(fs.writeFile);
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+function managerInfo(){
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "managerName",
+            message: "What is the manager's name?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "managerId",
+            message: "What is the manager's ID number?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "managerEmail",
+            message: "What is the manager's email?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "managerOfficeNumber",
+            message: "What is the manager's office number?",
+            default: "N/A" 
+        }
+    ]);
+}
+
+function EngineerInfo(){
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "engineerName",
+            message: "What is the engineer's name?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "engineerId",
+            message: "What is the engineer's ID number?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "engineerEmail",
+            message: "What is the engineer's email?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "engineerGithub",
+            message: "What is the engineer's github username?",
+            default: "N/A" 
+        }
+    ]);
+}
+
+function InternInfo(){
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "internName",
+            message: "What is the intern's name?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "internId",
+            message: "What is the intern's ID number?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "internEmail",
+            message: "What is the intern's email?",
+            default: "N/A" 
+        },
+        {
+            type: "input",
+            name: "internSchool",
+            message: "What is the intern's school name?",
+            default: "N/A" 
+        }
+    ]);
+}
+
+
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
