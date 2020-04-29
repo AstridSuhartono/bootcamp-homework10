@@ -13,13 +13,31 @@ const render = require("./lib/htmlRenderer");
 
 const writeFileAsync = util.promisify(fs.writeFile);
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-function promptEmployeeClass(){
+function addNewEmployee() {
+    inquirer.prompt([
+        {
+            type:"confirm",
+            message: "Add employees? (hit enter for YES)",
+            name: "addEmployee",
+            default: true
+        }
+    ])
+    .then(answers => {
+        populateTeam();
+        if (answers.addEmployee){
+            addNewEmployee();
+        } else {
+            console.log("No more employees added to the team");
+        }
+    })
+  
+}
+
+function promptEmployeeRole(){
     return inquirer.prompt([
         {
             type: "list",
-            message: "Which employee role to enter the data?",
+            message: "Which employee role to be inserted into the data?",
             name: "role",
             choices: [
                 "Manager", 
@@ -31,42 +49,23 @@ function promptEmployeeClass(){
     ]);
 }
 
-function isAddEmployee() {
-    inquirer.prompt([
-        {
-            type:"confirm",
-            message: "Add employees? (hit enter for YES)",
-            name: "addEmployee",
-            default: true
-        }
-    ])
-    .then(answers => {
-        populateEmployeeInfo();
-        if (answers.addEmployee){
-            isAddEmployee();
-        } else {
-            console.log("No more employees added to the team");
-        }
-    });
-}
-
-async function populateEmployeeInfo() {
+async function populateTeam() {
     try {
-        const data = await promptEmployeeClass();
+        const data = await promptEmployeeRole();
         const employeeRole = data.role;
         const employees = [];
         if(employeeRole === "Manager"){
             const managerData = await promptManagerInfo();
-            manager = new Manager(managerData.managerName,managerData.managerId,managerData.managerEmail,managerData.managerOfficeNumber);
+            manager = new Manager(managerData.managerName, managerData.managerId, managerData.managerEmail, managerData.managerOfficeNumber);
             employees.push(manager);
 
         } else if(employeeRole === "Engineer"){
             const engineerData = await promptEngineerInfo();
-            engineer = new Engineer(engineerData.engineerName,engineerData.engineerId,engineerData.engineerEmail,engineerData.engineerGithub);
+            engineer = new Engineer(engineerData.engineerName, engineerData.engineerId, engineerData.engineerEmail, engineerData.engineerGithub);
             employees.push(engineer);
         } else {
             const internData = await promptInternInfo();
-            intern = new Intern(internData.internName,internData.internId,internData.internEmail,internData.internSchool);
+            intern = new Intern(internData.internName, internData.internId, internData.internEmail, internData.internSchool);
             employees.push(intern);
         }
         let renderedData = render(employees);
@@ -175,7 +174,10 @@ function promptInternInfo(){
     ]);
 }
 
-isAddEmployee();
+addNewEmployee();
+
+// Write code to use inquirer to gather information about the development team members,
+// and to create objects for each team member (using the correct classes as blueprints!)
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
