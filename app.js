@@ -14,7 +14,50 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-function managerInfo(){
+function promptEmployeeClass(){
+    return inquirer.prompt([
+        {
+            type: "list",
+            message: "Which employee role to enter the data?",
+            name: "role",
+            choices: [
+                "Manager", 
+                "Engineer", 
+                "Intern",
+            ],
+            default: 0
+        }
+    ]);
+}
+
+async function populateEmployeeInfo() {
+    try{
+        const data = await promptEmployeeClass();
+        const employeeRole = data.role;
+        const employees = [];
+        if(employeeRole === "Manager"){
+            const managerData = await promptManagerInfo();
+            manager = new Manager(managerData.managerName,managerData.managerId,managerData.managerEmail,managerData.managerOfficeNumber);
+            employees.push(manager);
+
+        } else if(employeeRole === "Engineer"){
+            const engineerData = await promptEngineerInfo();
+            engineer = new Engineer(engineerData.engineerName,engineerData.engineerId,engineerData.engineerEmail,engineerData.engineerGithub);
+            employees.push(engineer);
+        } else {
+            const internData = await promptInternInfo();
+            intern = new Intern(internData.internName,internData.internId,internData.internEmail,internData.internSchool);
+            employees.push(intern);
+        }
+        let renderedData = render(employees);
+        await writeFileAsync(OUTPUT_DIR.outputPath,renderedData);
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+
+function promptManagerInfo(){
     return inquirer.prompt([
         {
             type: "input",
@@ -43,7 +86,7 @@ function managerInfo(){
     ]);
 }
 
-function EngineerInfo(){
+function promptEngineerInfo(){
     return inquirer.prompt([
         {
             type: "input",
@@ -72,7 +115,7 @@ function EngineerInfo(){
     ]);
 }
 
-function InternInfo(){
+function promptInternInfo(){
     return inquirer.prompt([
         {
             type: "input",
@@ -101,6 +144,7 @@ function InternInfo(){
     ]);
 }
 
+populateEmployeeInfo();
 
 
 // After the user has input all employees desired, call the `render` function (required
