@@ -15,11 +15,15 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 let employees = [];
 
-//get the employees array, render into html page and output it into a file
+//get the information on the team manager and added into employees array. After that render the array into html page and output it into a file
 async function init(){
-    console.log("Welcome to team generator application!");
-    const employees = await createEmployeesArray();
-    const renderedData = render(employees);
+    console.log(`Welcome to team generator application!
+----Please enter the team manager information first.---`);
+    const managerData = await promptManagerInfo();
+    const manager = new Manager(managerData.managerName, managerData.managerId, managerData.managerEmail, managerData.managerOfficeNumber);
+    const employeesArray = await createEmployeesArray();
+    employeesArray.push(manager);
+    const renderedData = render(employeesArray);
     checkFolder();
     await writeFileAsync(outputPath,renderedData);
 }
@@ -30,7 +34,7 @@ async function createEmployeesArray() {
     const answers = await inquirer.prompt([
         {
             type:"confirm",
-            message: "Add employees? (hit enter for YES)",
+            message: "Add a new member to the team? (hit enter for YES)",
             name: "addEmployee",
             default: true
         }
@@ -39,10 +43,10 @@ async function createEmployeesArray() {
     if (answers.addEmployee) {
         newEmployee = await createEmployeeInfo();
         employees.push(newEmployee);
-        console.log("New employee added into the team")
+        console.log("----New member added into the team.----")
         await createEmployeesArray();
     } else {
-        console.log("No more employees added into the team");
+        console.log("----No more members added into the team.----");
     }
     return employees;
 }
@@ -63,14 +67,9 @@ async function createEmployeeInfo(employee) {
     try {
         const data = await promptEmployeeRole();
         const employeeRole = data.role;
-        if(employeeRole === "Manager"){
-            const managerData = await promptManagerInfo();
-            employee = new Manager(managerData.managerName, managerData.managerId, managerData.managerEmail, managerData.managerOfficeNumber);
-
-        } else if(employeeRole === "Engineer"){
+        if(employeeRole === "Engineer"){
             const engineerData = await promptEngineerInfo();
             employee = new Engineer(engineerData.engineerName, engineerData.engineerId, engineerData.engineerEmail, engineerData.engineerGithub);
-            
         } else {
             const internData = await promptInternInfo();
             employee = new Intern(internData.internName, internData.internId, internData.internEmail, internData.internSchool);
@@ -90,7 +89,6 @@ function promptEmployeeRole(){
             message: "Which employee role to be inserted into the data?",
             name: "role",
             choices: [
-                "Manager", 
                 "Engineer", 
                 "Intern",
             ],
