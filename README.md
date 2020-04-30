@@ -13,7 +13,7 @@ The application will prompt the user for information about the team manager and 
 
 ### Video Recording
 
-Click the following link to see the video demo:
+Click the following link to see the video demo: https://drive.google.com/file/d/1UEkvJUQhxQW8eraVuTu3Ht6ilF3ZpW_e/view
 
 ### Usage Instructions
 
