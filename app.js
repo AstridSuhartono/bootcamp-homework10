@@ -15,14 +15,16 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 let employees = [];
 
+//get the employees array, render into html page and output it into a file
 async function init(){
-    let employees = await createEmployeesArray();
-    console.log("this is array from init:"+ employees);
-    let renderedData = render(employees);
+    console.log("Welcome to team generator application!");
+    const employees = await createEmployeesArray();
+    const renderedData = render(employees);
     checkFolder();
     await writeFileAsync(outputPath,renderedData);
 }
 
+//create the array for all the employees that user adds
 async function createEmployeesArray() {
     let newEmployee = {};
     const answers = await inquirer.prompt([
@@ -37,14 +39,15 @@ async function createEmployeesArray() {
     if (answers.addEmployee) {
         newEmployee = await createEmployeeInfo();
         employees.push(newEmployee);
+        console.log("New employee added into the team")
         await createEmployeesArray();
     } else {
-        console.log("No more employees added to the team");
+        console.log("No more employees added into the team");
     }
-    console.log("this is array from create array:"+ employees);
     return employees;
 }
 
+//check if the folder to generate the html page exists, if not create one
 function checkFolder() {
     try{
         if(!fs.existsSync(OUTPUT_DIR)){
@@ -55,6 +58,7 @@ function checkFolder() {
     }
 }
 
+//save the information of a new employee besed on their role and return it as a variable
 async function createEmployeeInfo(employee) {
     try {
         const data = await promptEmployeeRole();
@@ -78,6 +82,7 @@ async function createEmployeeInfo(employee) {
     }
 }
 
+//getting the employee role that is going to be added into the team
 function promptEmployeeRole(){
     return inquirer.prompt([
         {
@@ -94,6 +99,7 @@ function promptEmployeeRole(){
     ]);
 }
 
+//questions to get information on manager
 function promptManagerInfo(){
     return inquirer.prompt([
         {
@@ -123,6 +129,7 @@ function promptManagerInfo(){
     ]);
 }
 
+//questions to get information on engineer
 function promptEngineerInfo(){
     return inquirer.prompt([
         {
@@ -152,6 +159,7 @@ function promptEngineerInfo(){
     ]);
 }
 
+//questions to get information on intern
 function promptInternInfo(){
     return inquirer.prompt([
         {
@@ -181,27 +189,6 @@ function promptInternInfo(){
     ]);
 }
 
+//start the application
 init();
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
