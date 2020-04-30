@@ -112,19 +112,22 @@ function promptManagerInfo(){
             type: "input",
             name: "managerId",
             message: "What is the manager's ID number?",
-            default: "N/A" 
+            default: 0,
+            validate: validateNumberInput
         },
         {
             type: "input",
             name: "managerEmail",
             message: "What is the manager's email?",
-            default: "N/A" 
+            default: "default@email.com",
+            validate: validateEmailInput
         },
         {
             type: "input",
             name: "managerOfficeNumber",
             message: "What is the manager's office number?",
-            default: "N/A" 
+            default: 0,
+            validate: validateNumberInput
         }
     ]);
 }
@@ -142,13 +145,15 @@ function promptEngineerInfo(){
             type: "input",
             name: "engineerId",
             message: "What is the engineer's ID number?",
-            default: "N/A" 
+            default: 0,
+            validate: validateNumberInput
         },
         {
             type: "input",
             name: "engineerEmail",
             message: "What is the engineer's email?",
-            default: "N/A" 
+            default: "default@email.com",
+            validate: validateEmailInput
         },
         {
             type: "input",
@@ -172,13 +177,15 @@ function promptInternInfo(){
             type: "input",
             name: "internId",
             message: "What is the intern's ID number?",
-            default: "N/A" 
+            default: 0,
+            validate: validateNumberInput
         },
         {
             type: "input",
             name: "internEmail",
             message: "What is the intern's email?",
-            default: "N/A" 
+            default: "default@email.com",
+            validate: validateEmailInput
         },
         {
             type: "input",
@@ -189,6 +196,23 @@ function promptInternInfo(){
     ]);
 }
 
+//to validate that input is numbers only
+function validateNumberInput(value) {
+    var num = value.match( /^[0-9]+$/);
+    if(num){
+        return true;
+    }
+    return `Please enter a valid number`;
+}
+
+//to validate that input is a proper email address
+function validateEmailInput(value) {
+    var email = value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/);
+    if(email){
+        return true;
+    }
+    return `Please enter a valid email address`;
+}
 //start the application
 init();
 
