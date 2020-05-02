@@ -110,7 +110,7 @@ function promptManagerInfo(){
             type: "input",
             name: "managerId",
             message: "What is the manager's ID number?",
-            default: 0,
+            default: "N/A",
             validate: validateNumberInput
         },
         {
@@ -124,7 +124,7 @@ function promptManagerInfo(){
             type: "input",
             name: "managerOfficeNumber",
             message: "What is the manager's office number?",
-            default: 0,
+            default: "N/A",
             validate: validateNumberInput
         }
     ]);
@@ -143,7 +143,7 @@ function promptEngineerInfo(){
             type: "input",
             name: "engineerId",
             message: "What is the engineer's ID number?",
-            default: 0,
+            default: "N/A",
             validate: validateNumberInput
         },
         {
@@ -175,7 +175,7 @@ function promptInternInfo(){
             type: "input",
             name: "internId",
             message: "What is the intern's ID number?",
-            default: 0,
+            default: "N/A",
             validate: validateNumberInput
         },
         {
